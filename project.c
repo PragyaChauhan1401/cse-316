@@ -17,69 +17,69 @@ struct Process {
 
 // Queues
 struct Process queue1[QUEUE1_SIZE];
-int front1 = 0, rear1 = 0;
+int start1 = 0, end1 = 0;
 
 struct Process queue2[QUEUE2_SIZE];
-int front2 = 0, rear2 = 0;
+int start2 = 0, end2 = 0;
 
 // Function to enqueue a process in Queue 1
 void enqueueQueue1(struct Process p) {
-    if (rear1 == QUEUE1_SIZE) {
+    if (end1 == QUEUE1_SIZE) {
         printf("Queue 1 is full.\n");
         return;
     }
-    queue1[rear1++] = p;
+    queue1[end1++] = p;
 }
 
 // Function to enqueue a process in Queue 2
 void enqueueQueue2(struct Process p) {
-    if (rear2 == QUEUE2_SIZE) {
+    if (end2 == QUEUE2_SIZE) {
         printf("Queue 2 is full.\n");
         return;
     }
-    queue2[rear2++] = p;
+    queue2[end2++] = p;
 }
 
 // Function to dequeue a process from Queue 1
 struct Process dequeueQueue1() {
-    if (front1 == rear1) {
+    if (start1 == end1) {
         printf("Queue 1 is empty.\n");
         exit(1);
     }
-    struct Process p = queue1[front1];
-    for (int i = front1; i < rear1 - 1; i++) {
+    struct Process p = queue1[start1];
+    for (int i = start1; i < end1 - 1; i++) {
         queue1[i] = queue1[i + 1];
     }
-    rear1--;
+    end1--;
     return p;
 }
 
 // Function to dequeue a process from Queue 2
 struct Process dequeueQueue2() {
-    if (front2 == rear2) {
+    if (start2 == end2) {
         printf("Queue 2 is empty.\n");
         exit(1);
     }
-    struct Process p = queue2[front2];
-    for (int i = front2; i < rear2 - 1; i++) {
+    struct Process p = queue2[start2];
+    for (int i = start2; i < end2 - 1; i++) {
         queue2[i] = queue2[i + 1];
     }
-    rear2--;
+    end2--;
     return p;
 }
 
 // Function to execute processes in Queue 1 (Fixed priority preemptive scheduling)
 void executeQueue1() {
-    if (front1 == rear1) {
+    if (start1 == end1) {
         return; // Queue 1 is empty
     }
 
     // Find the highest priority process in Queue 1
-    int highest_priority = -1;
+    int higher_priority = -1;
     int index = -1;
-    for (int i = front1; i < rear1; i++) {
-        if (queue1[i].priority > highest_priority) {
-            highest_priority = queue1[i].priority;
+    for (int i = start1; i < end1; i++) {
+        if (queue1[i].priority > higher_priority) {
+            higher_priority = queue1[i].priority;
             index = i;
         }
     }
@@ -97,7 +97,7 @@ void executeQueue1() {
 
 // Function to execute processes in Queue 2 (Round Robin scheduling)
 void executeQueue2() {
-    if (front2 == rear2) {
+    if (start2 == end2) {
         return; // Queue 2 is empty
     }
 
@@ -126,8 +126,8 @@ int main() {
         enqueueQueue1(processes[i]);
     }
 
-    while (front1 != rear1 || front2 != rear2) {
-        if (front1 != rear1) {
+    while (start1 != end1 || start2 != end2) {
+        if (start1 != end1) {
             executeQueue1(); // Execute processes in Queue 1
         } else {
             executeQueue2(); // Execute processes in Queue 2
